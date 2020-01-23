@@ -1,5 +1,6 @@
-import axios from 'axios';
-import {updateDB, getFavs} from '../firebase';
+import axios from 'axios'
+import {updateDB, getFavs} from '../firebase'
+import ApolloClient, {gql} from 'apollo-boost'
 
 
 
@@ -12,6 +13,10 @@ let initialData = {
 }
 
 let URL = "https://rickandmortyapi.com/api/character";
+
+let client = new ApolloClient({
+    uri:"https://rickandmortyapi.com/graphql"
+})
 
 let GET_CHARACTERS = "GET_CHARACTERS";
 let GET_CHARACTERS_SUCCESS = "GET_CHARACTERS_SUCCESS";
@@ -99,22 +104,54 @@ export let removeCharacterAction = () => (dispatch, getState) =>{
 }
 
 export let getCharactersAction = () => (dispatch, getState) =>{
+    let query = gql`
+    {
+        characters{
+            results{
+                name
+                image
+            }
+        }
+    }
+    `
     dispatch({
-        type: GET_CHARACTERS,
+        type: GET_CHARACTERS
+    })  
+    return client.query({
+        query
     })
-    return axios.get(URL)    
-    .then(res=>{
-        dispatch({
-            type: GET_CHARACTERS_SUCCESS,
-            payload: res.data.results,
-        })
+    .then(({data, error})=>{
+        if(error){
+            dispatch({
+                type:GET_CHARACTERS_ERROR,
+                payload: data.characters.results
+            })
+            return
+        }
+        else{
+            dispatch({
+                type:GET_CHARACTERS_SUCCESS,
+                payload: data.characters.results
+            })
+        }
+
     })
-    .catch(err=>{
-        console.log(err)
-        dispatch({
-            type: GET_CHARACTERS_ERROR,
-            payload: err.response.message
-        })
-    })    
+    // dispatch({
+    //     type: GET_CHARACTERS,
+    // })
+    // return axios.get(URL)    
+    // .then(res=>{
+    //     dispatch({
+    //         type: GET_CHARACTERS_SUCCESS,
+    //         payload: res.data.results,
+    //     })
+    // })
+    // .catch(err=>{
+    //     console.log(err)
+    //     dispatch({
+    //         type: GET_CHARACTERS_ERROR,
+    //         payload: err.response.message
+    //     })
+    // })    
 }
 
