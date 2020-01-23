@@ -8,6 +8,7 @@ import 'font-awesome/css/font-awesome.css'
 import {Provider} from 'react-redux'; 
 import generateStore from './redux/store';
 
+
 let store = generateStore();
 
 let WithRouter = () => <BrowserRouter> <App /> </BrowserRouter>

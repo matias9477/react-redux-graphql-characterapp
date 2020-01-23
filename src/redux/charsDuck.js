@@ -88,8 +88,10 @@ export let addToFavoritesAction = () => (dispatch, getState) =>{
 }
 
 export let removeCharacterAction = () => (dispatch, getState) =>{
-    let { array } = getState().characters
+    let { array } = getState().characters //del estado me traigo el array
     array.shift() //shift borra el index 0 del array
+    //como ya hice lo que queria, ahora tengo que despachar la acción, mi accion tiene un tipo y una payload
+    //mi tipo es usando la constante pára que despues el reducer la use y el payload es lo que paso para que el reducer haga lo tque tiene que hacer con ella
     dispatch({
         type:REMOVE_CHARACTER,
         payload: [...array]
